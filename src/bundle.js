@@ -65,7 +65,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "700edc1be7dbc636800e"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "4017f36174c583f736f4"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -40532,6 +40532,10 @@
 	      return _extends({}, state, {
 	        loginErrorMessage: action.payload.loginErrorMessage
 	      });
+	    case _actions.SIGNUP_ERROR_MESSAGE:
+	      return _extends({}, state, {
+	        signupErrorMessage: action.payload.signupErrorMessage
+	      });
 	    default:
 	      return defaultState;
 	  }
@@ -40579,7 +40583,9 @@
 	      dispatch({
 	        type: LOGIN_ERROR_MESSAGE,
 	        payload: {
-	          loginErrorMessage: loginErrorMessage
+	          loginErrorMessage: {
+	            type: 'error', message: loginErrorMessage
+	          }
 	        }
 	      });
 	      if (statusCode === 401) _reactRouter.browserHistory.push('/signup');
@@ -40589,11 +40595,22 @@
 
 	var fireSignup = exports.fireSignup = function fireSignup(userData) {
 	  return function (dispatch) {
-	    debugger;
+	    // clear the login error message
+
+	    dispatch({
+	      type: LOGIN_ERROR_MESSAGE,
+	      payload: {
+	        loginErrorMessage: {
+	          type: 'success', message: 'Signup successful, please login now'
+	        }
+	      }
+	    });
+
 	    (0, _api2.default)('https://be.bhyve-app.com:3020/user/signup', userData).then(function () {
-	      return _reactRouter.browserHistory.push('/login');
-	    }).catch(function (response) {
-	      var statusCode = response.data.statusCode;
+	      return _reactRouter.browserHistory.push('/');
+	    }).catch(function (_ref2) {
+	      var response = _ref2.response;
+
 	      var signupErrorMessage = response.data.message.forEach ? response.data.message.join('\n') : response.data.message;
 	      dispatch({
 	        type: SIGNUP_ERROR_MESSAGE,
@@ -40601,7 +40618,6 @@
 	          signupErrorMessage: signupErrorMessage
 	        }
 	      });
-	      if (statusCode === 201) _reactRouter.browserHistory.push('/');
 	    });
 	  };
 	};
@@ -45631,13 +45647,6 @@
 	      userData = _useState2[0],
 	      setUserData = _useState2[1];
 
-	  var _useState3 = (0, _react.useState)({
-	    loginErrorMessage: loginErrorMessage
-	  }),
-	      _useState4 = _slicedToArray(_useState3, 2),
-	      error = _useState4[0],
-	      setError = _useState4[1];
-
 	  return _react2.default.createElement(
 	    _core.Grid,
 	    {
@@ -45647,22 +45656,27 @@
 	      justify: 'center',
 	      alignItems: 'center',
 	      style: { 'flexDirection': 'column' } },
+	    loginErrorMessage && _react2.default.createElement(
+	      _Alert2.default,
+	      { severity: loginErrorMessage.type },
+	      loginErrorMessage.message
+	    ),
 	    _react2.default.createElement(
 	      _core.Paper,
 	      {
 	        style: {
-	          width: '30%',
-	          margin: '5%',
+	          width: '15%',
+	          margin: '1%',
 	          padding: '10%'
 	        } },
 	      _react2.default.createElement(
+	        'h4',
+	        null,
+	        'Welcome back! Please login'
+	      ),
+	      _react2.default.createElement(
 	        _core.Grid,
 	        { item: true, xs: 8 },
-	        loginErrorMessage && _react2.default.createElement(
-	          _Alert2.default,
-	          { severity: 'error' },
-	          loginErrorMessage
-	        ),
 	        _react2.default.createElement(
 	          _core.Grid,
 	          { item: true, xs: 12 },
@@ -45708,10 +45722,10 @@
 	      login = _ref2.login,
 	      loginErrorMessage = _ref2.loginErrorMessage;
 
-	  var _useState5 = (0, _react.useState)(false),
-	      _useState6 = _slicedToArray(_useState5, 2),
-	      loggedIn = _useState6[0],
-	      setLoggedIn = _useState6[1];
+	  var _useState3 = (0, _react.useState)(false),
+	      _useState4 = _slicedToArray(_useState3, 2),
+	      loggedIn = _useState4[0],
+	      setLoggedIn = _useState4[1];
 
 	  // user.token ? true : false;
 
@@ -45727,7 +45741,7 @@
 	Login.propTypes = {
 	  user: _propTypes2.default.object,
 	  login: _propTypes2.default.func,
-	  loginErrorMessage: _propTypes2.default.string
+	  loginErrorMessage: _propTypes2.default.object
 	};
 
 	exports.default = Login;
@@ -99399,12 +99413,11 @@
 
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 
-	var _actions = __webpack_require__(138);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var SignupForm = function SignupForm(_ref) {
-	  var signupErrorMessage = _ref.signupErrorMessage;
+	  var signup = _ref.signup,
+	      signupErrorMessage = _ref.signupErrorMessage;
 
 	  var _useState = (0, _react.useState)({
 	    username: '',
@@ -99424,35 +99437,32 @@
 	      alignItems: 'center',
 	      style: { 'flexDirection': 'column' }
 	    },
+	    signupErrorMessage && _react2.default.createElement(
+	      _Alert2.default,
+	      { severity: 'error' },
+	      signupErrorMessage
+	    ),
 	    _react2.default.createElement(
 	      _core.Paper,
 	      {
 	        style: {
-	          width: '30%',
-	          margin: '5%',
+	          width: '15%',
+	          margin: '1%',
 	          padding: '10%'
 	        } },
+	      _react2.default.createElement(_core.Grid, { item: true, xs: 8 }),
 	      _react2.default.createElement(
 	        _core.Grid,
-	        { item: true, xs: 8 },
-	        signupErrorMessage && _react2.default.createElement(
-	          _Alert2.default,
-	          { severity: 'error' },
-	          signupErrorMessage
-	        )
+	        { item: true, xs: 12 },
+	        _react2.default.createElement(_core.TextField, { required: true, onChange: function onChange(event) {
+	            return setUserData({ username: event.target.value, password: userData.password });
+	          }, label: 'Username' })
 	      ),
 	      _react2.default.createElement(
 	        _core.Grid,
 	        { item: true, xs: 12 },
 	        _react2.default.createElement(_core.TextField, { required: true, onChange: function onChange(event) {
 	            return setUserData({ username: userData.username, password: event.target.value });
-	          }, label: 'Email' })
-	      ),
-	      _react2.default.createElement(
-	        _core.Grid,
-	        { item: true, xs: 12 },
-	        _react2.default.createElement(_core.TextField, { required: true, onChange: function onChange(event) {
-	            return setUserData({ username: event.target.value, password: userData.password });
 	          }, label: 'Password' })
 	      ),
 	      _react2.default.createElement(
@@ -99461,7 +99471,7 @@
 	        _react2.default.createElement(
 	          _core.Button,
 	          { style: { marginTop: '6%' }, variant: 'contained', color: 'primary', disableElevation: true, onClick: function onClick() {
-	              debugger;(0, _actions.fireSignup)(userData);
+	              return signup(userData);
 	            }, label: 'Password' },
 	          'Signup'
 	        )
@@ -99472,7 +99482,8 @@
 	};
 
 	SignupForm.propTypes = {
-	  signupErrorMessage: _propTypes2.default.string
+	  signupErrorMessage: _propTypes2.default.string,
+	  signup: _propTypes2.default.func
 	};
 
 	exports.default = SignupForm;
