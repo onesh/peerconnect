@@ -4,6 +4,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import ErrorHandler from './components/ErrorHandler';
 import Login from './components/Login';
 import Signup from './components/Signup';
 
@@ -14,8 +15,10 @@ import Signup from './components/Signup';
 export default (
   <Router>
     <Switch>
-      <Route path="/" component={Login} />
-      <Route path="/signup" component={Signup} />
+      <ErrorHandler>
+        <Route path="/" component={Login} />
+        <Route path="/signup" component={Signup} />
+      </ErrorHandler>
     </Switch>
   </Router>
 );
